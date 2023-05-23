@@ -74,3 +74,11 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ```bash
 npx create-react-app project-name
 ```
+
+# install heroicons
+
+```bash
+npm i sass
+npm i heroicons
+npm install react-bootstrap bootstrap
+```

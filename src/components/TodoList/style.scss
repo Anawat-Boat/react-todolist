@@ -1,0 +1,12 @@
+.todo-list-container {
+  display: flex;
+  font-size: x-large;
+  align-items: center;
+  .button-group{
+    display: flex;
+    justify-content: flex-end;
+  }
+  .text{
+    text-align: start;
+  }
+}
