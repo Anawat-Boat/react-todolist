@@ -14,13 +14,13 @@ function TodoList({
 
   return (
     <>
-      <Col md={8} className="todo-list-container p-2">
+      <Col md={12} className="todo-list-container p-2">
         <Col md={10} className="text" style={styles}>
           {children}
         </Col>
         <Col className="button-group">
           <Button
-            onClick={() => onClickChangeStatus(id)}
+            onClick={() => onClickChangeStatus(id, children)}
             variant="success"
             className="ms-1"
           >
