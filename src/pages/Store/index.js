@@ -3,9 +3,12 @@ import todolistContext from "../../contexts/todolistContext";
 import { TodoList } from "../../components";
 import { Col, Row } from "react-bootstrap";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+
 function Store({ todoListApi, setTodoListApi }) {
   const [todoList, setTodoList] = useContext(todolistContext);
-
+  const todolistRedux = useSelector((state) => state);
+  const dispatch = useDispatch();
   const handleRemoveContext = (id) => {
     setTodoList(todoList.filter((x) => x.id !== id));
   };
@@ -16,6 +19,7 @@ function Store({ todoListApi, setTodoListApi }) {
     listCopy[idx].isTodo = true;
     setTodoList(listCopy);
   };
+
   const handleRemoveApi = async (id) => {
     const result = await axios.delete(`http://10.112.85.212:8999/tasks/${id}`);
     console.log(result);
@@ -28,6 +32,24 @@ function Store({ todoListApi, setTodoListApi }) {
       isDone: true,
     });
     console.log(result);
+  };
+
+  const handleSetIsTodoRedux = (id, children) => {
+    dispatch({
+      type: "UPDATE",
+      payload: {
+        id,
+      },
+    });
+  };
+
+  const handleRemoveRedux = (id, children) => {
+    dispatch({
+      type: "DELETE",
+      payload: {
+        id,
+      },
+    });
   };
 
   return (
@@ -56,6 +78,20 @@ function Store({ todoListApi, setTodoListApi }) {
               isTodo={v.isDone}
               onClickRemove={handleRemoveApi}
               onClickChangeStatus={handleSetIsTodoApi}
+            >
+              {v.title}
+            </TodoList>
+          ))}
+        </Col>
+        <Col>
+          <h1>Store with Redux </h1>
+          {todolistRedux.map((v) => (
+            <TodoList
+              key={v.id}
+              id={v.id}
+              isTodo={v.isDone}
+              onClickRemove={handleRemoveRedux}
+              onClickChangeStatus={handleSetIsTodoRedux}
             >
               {v.title}
             </TodoList>

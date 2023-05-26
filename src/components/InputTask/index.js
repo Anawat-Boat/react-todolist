@@ -4,12 +4,14 @@ import todolistContext from "../../contexts/todolistContext";
 import storeTypeContext from "../../contexts/storeTypeContext";
 import { v4 as uuid } from "uuid";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+
 function InputTask({ fetchData, todoListApi }) {
   const [todoList, setTodoList] = useContext(todolistContext);
   const [storeType, setStoreType] = useContext(storeTypeContext);
   const [newItem, setNewItem] = useState();
   const inputRef = useRef();
-
+  const dispatch = useDispatch();
   const sendData = async () => {
     const maxObj = todoListApi.reduce((accumulator, current) => {
       return accumulator.id > current.id ? accumulator : current;
@@ -19,7 +21,6 @@ function InputTask({ fetchData, todoListApi }) {
       title: newItem,
       isDone: false,
     });
-    console.log(result);
   };
 
   useEffect(() => {
@@ -51,8 +52,16 @@ function InputTask({ fetchData, todoListApi }) {
       const newTodo = { id: unique_id, todoItem: newItem, isTodo: false };
       const newList = [...todoList, newTodo];
       setTodoList(newList);
-    } else {
+    } else if (storeType === "UseApi") {
       sendData();
+    } else if (storeType === "UseRedux") {
+      const maxObj = todoListApi.reduce((accumulator, current) => {
+        return accumulator.id > current.id ? accumulator : current;
+      });
+      dispatch({
+        type: "ADD",
+        payload: { id: maxObj.id + 1, title: newItem, isDone: false },
+      });
     }
     setNewItem("");
     inputRef.current.focus();
@@ -92,6 +101,15 @@ function InputTask({ fetchData, todoListApi }) {
             checked={storeType === "UseApi"}
             onChange={handleStoreTypeChange}
             id="UseApi"
+          />
+          <Form.Check
+            inline
+            label="UseRedux"
+            name="group1"
+            type="radio"
+            checked={storeType === "UseRedux"}
+            onChange={handleStoreTypeChange}
+            id="UseRedux"
           />
         </div>
       </Form>
