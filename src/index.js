@@ -5,12 +5,17 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import ThemeProvider from "react-bootstrap/ThemeProvider";
 
-import reducer from "./store/reducer";
+import todolistReducer from "./store/todolistReducer";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
-
+import { createStore, applyMiddleware, combineReducers } from "redux";
+import thunk from "redux-thunk";
 const root = ReactDOM.createRoot(document.getElementById("root"));
-const store = createStore(reducer);
+const store = createStore(
+  combineReducers({
+    todolistReducer,
+  }),
+  applyMiddleware(thunk)
+);
 root.render(
   <React.StrictMode>
     <Provider store={store}>

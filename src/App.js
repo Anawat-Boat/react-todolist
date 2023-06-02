@@ -43,7 +43,7 @@ function App() {
                     element={
                       <StorePage
                         todoListApi={todoListApi}
-                        setTodoListApi={setTodoListApi}
+                        fetchData={fetchData}
                       />
                     }
                   />

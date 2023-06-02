@@ -1,14 +1,17 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import todolistContext from "../../contexts/todolistContext";
 import { TodoList } from "../../components";
 import { Col, Row } from "react-bootstrap";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
+import * as todolistActions from "../../actions/todolistActions";
 
-function Store({ todoListApi, setTodoListApi }) {
+function Store({ todoListApi, fetchData }) {
   const [todoList, setTodoList] = useContext(todolistContext);
-  const todolistRedux = useSelector((state) => state);
+  const todolistRedux = useSelector((state) => state.todolistReducer);
+
   const dispatch = useDispatch();
+
   const handleRemoveContext = (id) => {
     setTodoList(todoList.filter((x) => x.id !== id));
   };
@@ -21,35 +24,37 @@ function Store({ todoListApi, setTodoListApi }) {
   };
 
   const handleRemoveApi = async (id) => {
-    const result = await axios.delete(`http://10.112.85.212:8999/tasks/${id}`);
-    console.log(result);
+    await axios.delete(`http://10.112.85.212:8999/tasks/${id}`);
+    fetchData();
   };
 
   const handleSetIsTodoApi = async (id, children) => {
-    const result = await axios.put(`http://10.112.85.212:8999/tasks/${id}`, {
+    await axios.put(`http://10.112.85.212:8999/tasks/${id}`, {
       id: id,
       title: children,
       isDone: true,
     });
-    console.log(result);
+    fetchData();
   };
 
   const handleSetIsTodoRedux = (id, children) => {
-    dispatch({
+    const action = {
       type: "UPDATE",
       payload: {
         id,
       },
-    });
+    };
+    dispatch(todolistActions.actionAsync(action));
   };
 
   const handleRemoveRedux = (id, children) => {
-    dispatch({
+    const action = {
       type: "DELETE",
       payload: {
         id,
       },
-    });
+    };
+    dispatch(todolistActions.actionAsync(action));
   };
 
   return (
@@ -84,8 +89,14 @@ function Store({ todoListApi, setTodoListApi }) {
           ))}
         </Col>
         <Col>
-          <h1>Store with Redux </h1>
-          {todolistRedux.map((v) => (
+          <div>
+            {todolistRedux.loading ? (
+              <h1>Loading... </h1>
+            ) : (
+              <h1>Store with Redux </h1>
+            )}
+          </div>
+          {todolistRedux.list.map((v) => (
             <TodoList
               key={v.id}
               id={v.id}
