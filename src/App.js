@@ -2,9 +2,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.scss";
 
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Container, Row } from "react-bootstrap";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import todolistContext from "./contexts/todolistContext";
 import StoreTypeContext from "./contexts/storeTypeContext";
 import { HomePage, StorePage } from "./pages";
@@ -19,8 +19,9 @@ function App() {
     setTodoListApi(result.data);
   };
 
-  useEffect(() => {
+  useMemo(() => {
     fetchData();
+    console.log("useMemo");
   }, []);
 
   return (
@@ -43,7 +44,7 @@ function App() {
                     element={
                       <StorePage
                         todoListApi={todoListApi}
-                        setTodoListApi={setTodoListApi}
+                        fetchData={fetchData}
                       />
                     }
                   />

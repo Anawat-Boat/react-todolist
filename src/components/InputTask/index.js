@@ -2,30 +2,34 @@ import { Col, InputGroup, Form, Button } from "react-bootstrap";
 import { useRef, useState, useEffect, useContext } from "react";
 import todolistContext from "../../contexts/todolistContext";
 import storeTypeContext from "../../contexts/storeTypeContext";
+import * as todolistActions from "../../actions/todolistActions";
 import { v4 as uuid } from "uuid";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+
 function InputTask({ fetchData, todoListApi }) {
   const [todoList, setTodoList] = useContext(todolistContext);
   const [storeType, setStoreType] = useContext(storeTypeContext);
+  const todolistRedux = useSelector((state) => state.todolistReducer);
   const [newItem, setNewItem] = useState();
   const inputRef = useRef();
+  const dispatch = useDispatch();
 
   const sendData = async () => {
     const maxObj = todoListApi.reduce((accumulator, current) => {
       return accumulator.id > current.id ? accumulator : current;
     });
-    const result = await axios.post("http://10.112.85.212:8999/tasks", {
+    await axios.post("http://10.112.85.212:8999/tasks", {
       id: maxObj.id + 1,
       title: newItem,
       isDone: false,
     });
-    console.log(result);
+    fetchData();
   };
 
   useEffect(() => {
     inputRef.current.focus();
-    fetchData();
-  }, [fetchData]);
+  }, []);
 
   const handleChange = (event) => {
     setNewItem(event.target.value);
@@ -51,8 +55,20 @@ function InputTask({ fetchData, todoListApi }) {
       const newTodo = { id: unique_id, todoItem: newItem, isTodo: false };
       const newList = [...todoList, newTodo];
       setTodoList(newList);
-    } else {
+    } else if (storeType === "UseApi") {
       sendData();
+    } else if (storeType === "UseRedux") {
+      const maxObj =
+        todolistRedux.list.length === 0
+          ? 0
+          : todolistRedux.list.reduce((accumulator, current) => {
+              return accumulator.id > current.id ? accumulator : current;
+            }).id;
+      const action = {
+        type: "ADD",
+        payload: { id: maxObj + 1, title: newItem, isDone: false },
+      };
+      dispatch(todolistActions.actionAsync(action));
     }
     setNewItem("");
     inputRef.current.focus();
@@ -92,6 +108,15 @@ function InputTask({ fetchData, todoListApi }) {
             checked={storeType === "UseApi"}
             onChange={handleStoreTypeChange}
             id="UseApi"
+          />
+          <Form.Check
+            inline
+            label="UseRedux"
+            name="group1"
+            type="radio"
+            checked={storeType === "UseRedux"}
+            onChange={handleStoreTypeChange}
+            id="UseRedux"
           />
         </div>
       </Form>
