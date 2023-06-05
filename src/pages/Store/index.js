@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import todolistContext from "../../contexts/todolistContext";
+import storeTypeContext from "../../contexts/storeTypeContext";
 import { TodoList } from "../../components";
 import { Col, Row } from "react-bootstrap";
 import axios from "axios";
@@ -9,6 +10,7 @@ import * as todolistActions from "../../actions/todolistActions";
 function Store({ todoListApi, fetchData }) {
   const [todoList, setTodoList] = useContext(todolistContext);
   const todolistRedux = useSelector((state) => state.todolistReducer);
+  const [storeType, setStoreType] = useContext(storeTypeContext);
 
   const dispatch = useDispatch();
 
@@ -60,54 +62,60 @@ function Store({ todoListApi, fetchData }) {
   return (
     <>
       <Row>
-        <Col>
-          <h1>Store with useContext</h1>
-          {todoList.map((v) => (
-            <TodoList
-              key={v.id}
-              id={v.id}
-              isTodo={v.isTodo}
-              onClickRemove={handleRemoveContext}
-              onClickChangeStatus={handleSetIsTodoContext}
-            >
-              {v.todoItem}
-            </TodoList>
-          ))}
-        </Col>
-        <Col>
-          <h1>Store with Api</h1>
-          {todoListApi.map((v) => (
-            <TodoList
-              key={v.id}
-              id={v.id}
-              isTodo={v.isDone}
-              onClickRemove={handleRemoveApi}
-              onClickChangeStatus={handleSetIsTodoApi}
-            >
-              {v.title}
-            </TodoList>
-          ))}
-        </Col>
-        <Col>
-          <div>
-            {todolistRedux.loading ? (
-              <h1>Loading... </h1>
-            ) : (
-              <h1>Store with Redux </h1>
-            )}
-          </div>
-          {todolistRedux.list.map((v) => (
-            <TodoList
-              key={v.id}
-              id={v.id}
-              isTodo={v.isDone}
-              onClickRemove={handleRemoveRedux}
-              onClickChangeStatus={handleSetIsTodoRedux}
-            >
-              {v.title}
-            </TodoList>
-          ))}
-        </Col>
+        {storeType === "UseContext" && (
+          <Col>
+            <h1>Store with useContext</h1>
+            {todoList.map((v) => (
+              <TodoList
+                key={v.id}
+                id={v.id}
+                isTodo={v.isTodo}
+                onClickRemove={handleRemoveContext}
+                onClickChangeStatus={handleSetIsTodoContext}
+              >
+                {v.todoItem}
+              </TodoList>
+            ))}
+          </Col>
+        )}
+        {storeType === "UseApi" && (
+          <Col>
+            <h1>Store with Api</h1>
+            {todoListApi.map((v) => (
+              <TodoList
+                key={v.id}
+                id={v.id}
+                isTodo={v.isDone}
+                onClickRemove={handleRemoveApi}
+                onClickChangeStatus={handleSetIsTodoApi}
+              >
+                {v.title}
+              </TodoList>
+            ))}
+          </Col>
+        )}
+        {storeType === "UseRedux" && (
+          <Col>
+            <div>
+              {todolistRedux.loading ? (
+                <h1>Loading... </h1>
+              ) : (
+                <h1>Store with Redux </h1>
+              )}
+            </div>
+            {todolistRedux.list.map((v) => (
+              <TodoList
+                key={v.id}
+                id={v.id}
+                isTodo={v.isDone}
+                onClickRemove={handleRemoveRedux}
+                onClickChangeStatus={handleSetIsTodoRedux}
+              >
+                {v.title}
+              </TodoList>
+            ))}
+          </Col>
+        )}
       </Row>
     </>
   );
