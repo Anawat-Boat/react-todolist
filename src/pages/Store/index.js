@@ -10,7 +10,7 @@ import * as todolistActions from "../../actions/todolistActions";
 function Store({ todoListApi, fetchData }) {
   const [todoList, setTodoList] = useContext(todolistContext);
   const todolistRedux = useSelector((state) => state.todolistReducer);
-  const [storeType, setStoreType] = useContext(storeTypeContext);
+  const [storeType] = useContext(storeTypeContext);
 
   const dispatch = useDispatch();
 
